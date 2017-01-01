@@ -89,4 +89,4 @@ ENV/
 .ropeproject
 
 # private files
-.private
+*.private
