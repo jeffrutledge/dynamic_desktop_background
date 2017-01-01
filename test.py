@@ -42,7 +42,7 @@ def update_desktop_bg(temp):
     text = u'{:2.0f}°F'.format(temp)
     text_size = draw.textsize(text, font=font)
     draw.text((640 - text_size[0] / 2, 310 - text_size[1] / 2), text, (255, 255, 255), font=font)
-    desktop_bg.save('desktop_bg.png')
+    desktop_bg.save('./graphics/desktop_bg.png')
 
     # Forces Mac OS to update desktop background
     subprocess.run(['/usr/bin/killall', 'Dock'])
