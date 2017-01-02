@@ -3,7 +3,13 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import subprocess
 import requests
+from requests.compat import urljoin
 import json
+
+def get_wunderground_api_key():
+    with open('./wunderground_api_key.private', 'r') as keyfile:
+        key = keyfile.readline()[:-1]
+    return key
 
 def get_location():
     request_url = 'http://geoip.nekudo.com/api//en/short'
@@ -31,12 +37,21 @@ def load_request(file_name):
 
     return request_json
 
-def get_weather_location(api_key):
-    request_url = ''
-    weather_request = requests.get()
+def get_weather():
+    url_base = 'http://api.wunderground.com/api'
+    url_params = 'conditions/q/autoip.json'
+    request_url = '/'.join((url_base, get_wunderground_api_key(), url_params))
+    weather_request = requests.get(request_url).json()
+
+    with open('weather.json', 'w') as outfile:
+        json.dump(weather_request, outfile)
 
 def update_desktop_bg(temp):
     desktop_bg = Image.open('./graphics/meditating_person_light_white_bg.png')
+    part_cloud = Image.open('./graphics/part_cloud.png')
+    size = tuple(x // 4 for x in part_cloud.size)
+    # desktop_bg.paste(part_cloud.resize(size), (0, 0, 0 + size[0], 0 + size[1]))
+    
     draw = ImageDraw.Draw(desktop_bg)
     font = ImageFont.truetype('/System/Library/Fonts/Avenir.ttc', 35)
     text = u'{:2.0f}°F'.format(temp)
@@ -47,5 +62,6 @@ def update_desktop_bg(temp):
     # Forces Mac OS to update desktop background
     subprocess.run(['/usr/bin/killall', 'Dock'])
 
-test = load_request('./autoip.json')
-print(test['current_observation']['temp_f'])
+weather = load_request('weather.json')
+temp = weather['current_observation']['temp_f']
+update_desktop_bg(temp)
