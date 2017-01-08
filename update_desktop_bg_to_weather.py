@@ -18,7 +18,7 @@ DESKTOP_BG_NAME_FROM_ICON = {
     'chancesnow' : 'snow.png',
     'chancetstorms' : 'rain.png',
     'clear' : 'clear.png',
-    'cloudy' : 'cloud.png',
+    'cloudy' : 'full_clouds.png',
     'flurries' : 'snow.png',
     'fog' : 'clear.png',
     'hazy' : 'clear.png',
