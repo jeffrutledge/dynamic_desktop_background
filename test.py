@@ -50,7 +50,7 @@ def update_desktop_bg(temp):
     desktop_bg = Image.open('./graphics/meditating_person_light_white_bg.png')
     part_cloud = Image.open('./graphics/part_cloud.png')
     size = tuple(x // 4 for x in part_cloud.size)
-    # desktop_bg.paste(part_cloud.resize(size), (0, 0, 0 + size[0], 0 + size[1]))
+    desktop_bg.paste(part_cloud, (0, 0), part_cloud.convert('RGBA'))
     
     draw = ImageDraw.Draw(desktop_bg)
     font = ImageFont.truetype('/System/Library/Fonts/Avenir.ttc', 35)
@@ -64,4 +64,3 @@ def update_desktop_bg(temp):
 
 weather = load_request('weather.json')
 temp = weather['current_observation']['temp_f']
-update_desktop_bg(temp)
