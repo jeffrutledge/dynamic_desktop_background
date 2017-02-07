@@ -6,6 +6,7 @@ import requests
 from requests.compat import urljoin
 from shutil import copyfile
 import subprocess
+import sys
 
 RELATIVE_WEATHER_JSON_PATH = 'weather.json'
 RELATIVE_WUNDERGROUND_API_KEY_PATH = 'wunderground_api_key.private'
@@ -77,4 +78,10 @@ if __name__ == '__main__':
     wunderground_api_key_path = path.join(
             file_path, RELATIVE_WUNDERGROUND_API_KEY_PATH)
 
-    set_desktop_bg(get_desktop_bg_path(update_weather()))
+    try:
+        weather = update_weather()
+    except requests.exceptions.ConnectionError:
+        print('Unable to establish connection to WunderGround weather api.', file=sys.stderr)
+        sys.exit()
+
+    set_desktop_bg(get_desktop_bg_path(weather))
