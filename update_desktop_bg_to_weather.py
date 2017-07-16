@@ -6,6 +6,7 @@ import requests
 from shutil import copyfile
 import subprocess
 import sys
+import sqlite3
 
 RELATIVE_WEATHER_JSON_PATH = 'weather.json'
 RELATIVE_WUNDERGROUND_API_KEY_PATH = 'wunderground_api_key.private'
@@ -70,11 +71,20 @@ def get_desktop_bg_path(weather=None):
 
 def set_desktop_bg(path):
     copyfile(path, system_desktop_bg_path)
+    # Set the system desktop background image
+    desktop_bg_db_path = ('/Users/jrutledge/Library/Application Support/Dock/'
+                          'desktoppicture.db')
+    conn = sqlite3.connect(desktop_bg_db_path)
+    c = conn.cursor()
+    c.execute('UPDATE data SET value = ?', (system_desktop_bg_path, ))
+    conn.commit()
+    conn.close()
     # Forces Mac OS to update desktop background
-    subprocess.run(['/usr/bin/killall', 'Dock'])
+    subprocess.run(['killall', 'Dock'])
+
 
 if __name__ == '__main__':
-    file_path = os.path.dirname(__file__)
+    file_path = os.path.abspath(os.path.dirname(__file__))
     weather_json_path = path.join(file_path, RELATIVE_WEATHER_JSON_PATH)
     system_desktop_bg_path = path.join(file_path,
                                        RELATIVE_SYSTEM_DESKTOP_BG_PATH)
