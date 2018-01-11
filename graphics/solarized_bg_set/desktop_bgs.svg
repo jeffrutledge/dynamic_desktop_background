@@ -18,7 +18,7 @@
    version="1.1"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="desktop_bgs.svg"
-   inkscape:export-filename="/home/jrutledge/safe/personal/developer/python/dynamic_desktop_background/graphics/solarized_bg_set/rain.png"
+   inkscape:export-filename="/home/jrutledge/safe/personal/developer/python/dynamic_desktop_background/graphics/solarized_bg_set/partly_cloudy.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    style="enable-background:new">
@@ -4170,14 +4170,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.70710678"
-     inkscape:cx="683.73069"
+     inkscape:cx="409.37326"
      inkscape:cy="651.17123"
      inkscape:document-units="px"
      inkscape:current-layer="layer9"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1080"
-     inkscape:window-x="0"
+     inkscape:window-width="956"
+     inkscape:window-height="1056"
+     inkscape:window-x="960"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      units="px"
@@ -4209,7 +4209,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -10357,8 +10357,9 @@
      inkscape:groupmode="layer"
      id="layer9"
      inkscape:label="snow"
-     style="display:inline"
-     transform="translate(0,280)">
+     style="display:none"
+     transform="translate(0,280)"
+     sodipodi:insensitive="true">
     <path
        inkscape:connector-curvature="0"
        id="path7032"
@@ -12944,7 +12945,7 @@
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="cloud oultine"
-     style="display:none"
+     style="display:inline"
      transform="translate(0,280)"
      sodipodi:insensitive="true">
     <path
