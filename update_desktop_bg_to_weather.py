@@ -3,15 +3,13 @@ import json
 import os
 from os import path
 import requests
-from shutil import copyfile
 import subprocess
 import sys
-import sqlite3
 
 RELATIVE_WEATHER_JSON_PATH = 'weather.json'
 RELATIVE_WUNDERGROUND_API_KEY_PATH = 'wunderground_api_key.private'
 RELATIVE_SYSTEM_DESKTOP_BG_PATH = 'graphics/desktop_bg.png'
-RELATIVE_DESKTOP_BGS_DIR = 'graphics/bg_set'
+RELATIVE_DESKTOP_BGS_DIR = 'graphics/solarized_bg_set'
 DESKTOP_BG_NAME_FROM_ICON = {
     'chanceflurries': 'snow.png',
     'chancerain': 'rain.png',
@@ -69,18 +67,26 @@ def get_desktop_bg_path(weather=None):
     return path.join(desktop_bgs_dir, desktop_bg_name)
 
 
-def set_desktop_bg(path):
-    copyfile(path, system_desktop_bg_path)
-    # Set the system desktop background image
-    desktop_bg_db_path = ('/Users/jrutledge/Library/Application Support/Dock/'
-                          'desktoppicture.db')
-    conn = sqlite3.connect(desktop_bg_db_path)
-    c = conn.cursor()
-    c.execute('UPDATE data SET value = ?', (system_desktop_bg_path, ))
-    conn.commit()
-    conn.close()
-    # Forces Mac OS to update desktop background
-    subprocess.run(['killall', 'Dock'])
+# Commented out to remove dependencies
+# def set_desktop_bg_osx(path):
+#     copyfile(path, system_desktop_bg_path)
+#     # Set the system desktop background image
+#     desktop_bg_db_path = ('/Users/jrutledge/Library/Application Support/Dock/'
+#                           'desktoppicture.db')
+#     conn = sqlite3.connect(desktop_bg_db_path)
+#     c = conn.cursor()
+#     c.execute('UPDATE data SET value = ?', (system_desktop_bg_path, ))
+#     conn.commit()
+#     conn.close()
+#     # Forces Mac OS to update desktop background
+#     subprocess.run(['killall', 'Dock'])
+
+
+def set_desktop_bg_linux(bg_path):
+    print('updating background to:')
+    print(bg_path)
+
+    subprocess.run(['feh', '--bg-fill', '--no-fehbg', bg_path])
 
 
 if __name__ == '__main__':
@@ -99,4 +105,4 @@ if __name__ == '__main__':
               file=sys.stderr)
         sys.exit(1)
 
-    set_desktop_bg(get_desktop_bg_path(weather))
+    set_desktop_bg_linux(get_desktop_bg_path(weather))
