@@ -5,6 +5,7 @@ from os import path
 import requests
 import subprocess
 import sys
+import datetime
 
 RELATIVE_WEATHER_JSON_PATH = 'weather.json'
 RELATIVE_WUNDERGROUND_API_KEY_PATH = 'wunderground_api_key.private'
@@ -21,7 +22,7 @@ DESKTOP_BG_NAME_FROM_ICON = {
     'flurries': 'snow.png',
     'fog': 'clear.png',
     'hazy': 'clear.png',
-    'mostlycloudy': 'partly_cloudy.png',
+    'mostlycloudy': 'full_clouds.png',
     'mostlysunny': 'partly_sunny.png',
     'partlycloudy': 'partly_cloudy.png',
     'partlysunny': 'partly_sunny.png',
@@ -39,16 +40,37 @@ def get_wunderground_api_key():
     return key
 
 
-def update_weather():
-    url_base = 'http://api.wunderground.com/api'
-    url_params = 'conditions/q/autoip.json'
-    request_url = '/'.join((url_base, get_wunderground_api_key(), url_params))
-    weather_request = requests.get(request_url).json()
+def update_weather(stale_time=datetime.timedelta(minutes=14)):
+    """ Update weather.json from wunderground api if stale.
+    Weather is stale if older than stale_time.
+    """
+    print('Getting weather.')
+    # If there is cached weather, check if stale
+    stale = True
+    if os.path.isfile(weather_json_path):
+        print('Checking if cached weather is stale.')
+        with open(weather_json_path, 'r') as infile:
+            weather_json = json.load(infile)
+        last_update_time_str = weather_json['current_observation'][
+            'local_time_rfc822']
+        last_update_time = datetime.datetime.strptime(
+            last_update_time_str, '%a, %d %b %Y %H:%M:%S %z')
+        # Remove timezone, because datetime.now has no timezone
+        last_update_time = last_update_time.replace(tzinfo=None)
+        stale = datetime.datetime.now() - last_update_time > stale_time
+    if stale:
+        print('Weather is stale, so updating.')
+        url_base = 'http://api.wunderground.com/api'
+        url_params = 'conditions/q/autoip.json'
+        request_url = '/'.join((url_base,
+                                get_wunderground_api_key(),
+                                url_params))
+        weather_json = requests.get(request_url).json()
 
-    with open(weather_json_path, 'w') as outfile:
-        json.dump(weather_request, outfile)
+        with open(weather_json_path, 'w') as outfile:
+            json.dump(weather_json, outfile)
 
-    return weather_request
+    return weather_json
 
 
 def get_stored_weather():
