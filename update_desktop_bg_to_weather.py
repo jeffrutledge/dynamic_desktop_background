@@ -46,19 +46,23 @@ def update_weather(stale_time=datetime.timedelta(minutes=14)):
     """
     print('Getting weather.')
     # If there is cached weather, check if stale
-    stale = True
+    need_to_update_weather = True
     if os.path.isfile(weather_json_path):
         print('Checking if cached weather is stale.')
         with open(weather_json_path, 'r') as infile:
             weather_json = json.load(infile)
-        last_update_time_str = weather_json['current_observation'][
-            'local_time_rfc822']
-        last_update_time = datetime.datetime.strptime(
-            last_update_time_str, '%a, %d %b %Y %H:%M:%S %z')
-        # Remove timezone, because datetime.now has no timezone
-        last_update_time = last_update_time.replace(tzinfo=None)
-        stale = datetime.datetime.now() - last_update_time > stale_time
-    if stale:
+        # Check if json file is cached observation
+        if 'current_observation' in weather_json:
+            # Check if stale
+            last_update_time_str = weather_json['current_observation'][
+                'local_time_rfc822']
+            last_update_time = datetime.datetime.strptime(
+                last_update_time_str, '%a, %d %b %Y %H:%M:%S %z')
+            # Remove timezone, because datetime.now has no timezone
+            last_update_time = last_update_time.replace(tzinfo=None)
+            need_to_update_weather = (datetime.datetime.now() -
+                                      last_update_time > stale_time)
+    if need_to_update_weather:
         print('Weather is stale, so updating.')
         url_base = 'http://api.wunderground.com/api'
         url_params = 'conditions/q/autoip.json'
