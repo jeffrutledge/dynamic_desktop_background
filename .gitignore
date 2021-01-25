@@ -90,5 +90,5 @@ ENV/
 
 # Project specific ignores
 *.private
-weather.json
+weather_cache
 graphics/desktop_bg.png
