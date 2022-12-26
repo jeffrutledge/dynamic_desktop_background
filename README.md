@@ -7,7 +7,8 @@ Updates desktop background based on weather.
   2. `open_weather_api_key.secret`: [open weather](openweathermap.org)
 2. Add module to `PYTHONPATH`
 3. Setup a periodic job to run `python3 -m dynamic_desktop_background`
-  1. e.g. `crontab` or `systemd` service
+  1. could use either `crontab` or `systemd` service
+  2. [systemd service example](https://github.com/jeffrutledge/dotfiles/tree/master/dynamic_desktop_background/.config/systemd/user)
 
 ### Dependencies
 - `requests` 
