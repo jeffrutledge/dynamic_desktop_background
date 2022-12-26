@@ -30,7 +30,6 @@ def read_api_key(key_path):
 def set_desktop_bg_linux(bg_path):
     print('updating background to:')
     print(bg_path)
-
     subprocess.run(['feh', '--bg-fill', '--no-fehbg', bg_path])
 
 

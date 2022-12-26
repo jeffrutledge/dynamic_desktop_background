@@ -98,7 +98,6 @@ class OpenWeatherRequester(CachedWeatherRequester):
             return 'snow.png'
         elif w_in(800, 900):
             if w_in(800, 801):
-                return 'sun.png'
                 return 'clear.png'
             elif w_in(801, 802):
                 return 'partly_sunny.png'
