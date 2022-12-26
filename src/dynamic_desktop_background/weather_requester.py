@@ -1,39 +1,52 @@
-from abc import ABC, abstractmethod
 import json
+import datetime
+from pathlib import Path
+from abc import ABC, abstractmethod
+
 
 class CachedWeatherRequester(ABC):
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def _weather_to_desktop_bg_image_name():
+    def _weather_to_desktop_bg_image_name(cls, weather):
         pass
 
     def __init__(self, api_key, cache_path, stale_time):
         self._api_key = api_key
-        self._cache_path = cache_path
+        self._cache_path = Path(cache_path)
         self.stale_time = stale_time
 
-    @abstractmethod
-    def cache_age(self):
-        pass
+    def cache_age(self, cache):
+        cache_time = datetime.datetime.fromisoformat(cache['update_dt_iso'])
+        return datetime.datetime.utcnow() - cache_time
 
-    def get_cached_weather(self):
+    def get_cache(self):
         with open(self._cache_path, 'r') as cache:
             return json.load(cache)
 
-    def set_cached_weather(self, weather):
-        with open(weather_json_path, 'w') as outfile:
-            json.dump(weather, self._cache_path)
+    def set_cache(self, weather):
+        cache_dict = dict(
+            update_dt_iso=datetime.datetime.isoformat(),
+            weather=weather,
+        )
+        with open(self._cache_path, 'w') as cache_file:
+            json.dump(cache_dict, cache_file)
 
     @abstractmethod
     def _request_weather(self):
         pass
 
     def get_weather(self):
-        if self.cache_age() < self.stale_time:
-            return self.get_cached_weather()
+        print('Getting weather.')
+        cache = self.get_cache()
+        cache_age = self.cache_age(cache)
+        print(f'cache_age={cache_age} stale_time={self.stale_time}')
+        if cache_age < self.stale_time:
+            print('Using cached weather.')
+            return cache['weather']
         else:
+            print('Cache is stale, requesting update.')
             weather = self._request_weather()
-            self.set_cached_weather(weather)
+            self.set_cache(weather)
             return weather
 
     def get_current_desktop_bg_image_name(self):
@@ -63,23 +76,11 @@ class WundergroundWeatherRequester(CachedWeatherRequester):
         'sunny': 'sun.png',
         'tstorms': 'rain.png'
     }
-    def _weather_to_desktop_bg_image_name(weather):
-        pass
 
-    def cache_age(self):
-        with open(weather_json_path, 'r') as infile:
-            weather_json = json.load(infile)
-        # Check if json file is cached observation
-        if 'current_observation' in weather_json:
-            # Check if stale
-            last_update_time_str = weather_json['current_observation'][
-                'local_time_rfc822']
-            last_update_time = datetime.datetime.strptime(
-                last_update_time_str, '%a, %d %b %Y %H:%M:%S %z')
-            # Remove timezone, because datetime.now has no timezone
-            last_update_time = last_update_time.replace(tzinfo=None)
-            need_to_update_weather = (datetime.datetime.now() -
-                                      last_update_time > stale_time)
+    @classmethod
+    def _weather_to_desktop_bg_image_name(cls, weather):
+        icon = weather['current_observation']['icon']
+        return cls.DESKTOP_BG_NAME_FROM_ICON[icon]
 
     def _request_weather(self):
         url_base = 'http://api.wunderground.com/api'
