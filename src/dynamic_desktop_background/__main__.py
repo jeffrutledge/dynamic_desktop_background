@@ -42,7 +42,7 @@ if __name__ == '__main__':
     lat_long_cache = requesters.CachedLatLonRequester(
         api_key=read_api_key(config_dir / 'lat_lon_api_key.secret'),
         cache_path=cache_dir / 'lat_lon_cache.json',
-        stale_time=datetime.timedelta(hours=1),
+        stale_time=datetime.timedelta(hours=4),
     )
     lat, lon = lat_long_cache.get_lat_lon()
 
